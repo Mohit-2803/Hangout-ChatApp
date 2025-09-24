@@ -1,6 +1,6 @@
 "use client";
 
-import { SignUp } from "@clerk/nextjs";
+import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
@@ -8,10 +8,6 @@ import { useState, useEffect } from "react";
 // Skeleton component for Clerk loading
 const ClerkSkeleton = () => (
   <div className="space-y-4 w-full max-w-md">
-    <div className="space-y-2">
-      <Skeleton className="h-4 w-28" />
-      <Skeleton className="h-10 w-full" />
-    </div>
     <div className="space-y-2">
       <Skeleton className="h-4 w-24" />
       <Skeleton className="h-10 w-full" />
@@ -39,7 +35,7 @@ const ClerkWrapper = () => {
 
   return isLoaded ? (
     <div className="w-full flex justify-center">
-      <SignUp
+      <SignIn
         appearance={{
           elements: {
             formButtonPrimary: "bg-blue-600 hover:bg-blue-700",
@@ -48,8 +44,8 @@ const ClerkWrapper = () => {
             headerSubtitle: "hidden",
           },
         }}
-        redirectUrl="/dashboard"
-        signInUrl="/sign-in"
+        redirectUrl="/dashboard?signin=success"
+        signUpUrl="/sign-up"
       />
     </div>
   ) : (
@@ -57,10 +53,25 @@ const ClerkWrapper = () => {
   );
 };
 
-export default function SignUpPage() {
+export default function SignInPage() {
   return (
     <div className="min-h-screen flex">
-      {/* Left side - Sign Up Form */}
+      {/* Left side - Full Image with Overlay */}
+      <div className="hidden lg:flex lg:w-1/2 relative">
+        {/* Background Image */}
+        <Image
+          src="/login.png"
+          alt="Login illustration"
+          fill
+          className="object-cover"
+          priority
+        />
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/20" />
+      </div>
+
+      {/* Right side - Sign In Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
@@ -74,41 +85,13 @@ export default function SignUpPage() {
                 className="mx-auto"
               />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Get Started
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
             <p className="text-gray-600">
-              Create your account and start connecting with friends.
+              Welcome back! Please sign in to your account.
             </p>
           </div>
 
           <ClerkWrapper />
-        </div>
-      </div>
-
-      {/* Right side - Full Image with Overlay */}
-      <div className="hidden lg:flex lg:w-1/2 relative">
-        {/* Background Image */}
-        <Image
-          src="/login.jpg"
-          alt="Signup illustration"
-          fill
-          className="object-cover"
-          priority
-        />
-
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/40" />
-
-        {/* Text Content Overlay */}
-        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12 w-full">
-          <div className="text-center space-y-6">
-            <h1 className="text-5xl font-bold mb-4">Join the Community!</h1>
-            <p className="text-xl max-w-md leading-relaxed">
-              Create your account and start chatting with friends, family, and
-              new connections.
-            </p>
-          </div>
         </div>
       </div>
     </div>

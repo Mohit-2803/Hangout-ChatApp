@@ -1,14 +1,16 @@
 // components/site-navbar.tsx
+"use client";
 import Link from "next/link";
 import Image from "next/image";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { UserButton } from "@clerk/nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ThemeToggle } from "@/components/ui/theme/theme-toggle";
 
-export default async function SiteNavbar() {
-  const { userId } = await auth();
-  const isSignedIn = !!userId;
-  const user = isSignedIn ? await currentUser() : null;
+export default function SiteNavbar() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded: isUserLoaded } = useUser();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -26,12 +28,16 @@ export default async function SiteNavbar() {
           />
           Hangout
         </Link>
-        <div className="flex items-center gap-2">
-          {isSignedIn ? (
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          {!isLoaded || !isUserLoaded ? (
+            // Skeleton loader while authentication is loading
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-9 w-16 rounded" />
+              <Skeleton className="h-8 w-8 rounded-full" />
+            </div>
+          ) : isSignedIn ? (
             <>
-              <span className="hidden sm:inline text-sm text-muted-foreground">
-                {user?.firstName ?? "Guest"}
-              </span>
               <UserButton afterSignOutUrl="/" />
             </>
           ) : (

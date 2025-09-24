@@ -1,7 +1,8 @@
-import { UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { Button } from "@/components/ui/button";
 import { redirect } from "next/navigation";
+import AuthSuccessToast from "@/components/auth/AuthSuccessToast";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -12,33 +13,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">Hangout</h1>
-              <span className="text-gray-500">Dashboard</span>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-700">
-                Welcome,{" "}
-                {user.firstName || user.emailAddresses[0]?.emailAddress}!
-              </span>
-              <UserButton
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    avatarBox: "w-10 h-10",
-                  },
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </header>
-
+      <AuthSuccessToast />
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
@@ -65,7 +40,9 @@ export default async function DashboardPage() {
               <p className="text-gray-600 mb-4">
                 Begin conversations with your friends and family.
               </p>
-              <Button className="w-full">Open Chat</Button>
+              <Button className="w-full" asChild>
+                <Link href="/conversations">Open Chat</Link>
+              </Button>
             </div>
 
             <div className="bg-white rounded-lg shadow p-6">
@@ -80,8 +57,8 @@ export default async function DashboardPage() {
               <p className="text-gray-600 mb-4">
                 Discover and connect with new people.
               </p>
-              <Button variant="outline" className="w-full">
-                Browse Users
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/friends">Browse Users</Link>
               </Button>
             </div>
 

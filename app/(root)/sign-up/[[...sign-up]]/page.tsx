@@ -1,6 +1,6 @@
 "use client";
 
-import { SignIn } from "@clerk/nextjs";
+import { SignUp } from "@clerk/nextjs";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
@@ -8,6 +8,10 @@ import { useState, useEffect } from "react";
 // Skeleton component for Clerk loading
 const ClerkSkeleton = () => (
   <div className="space-y-4 w-full max-w-md">
+    <div className="space-y-2">
+      <Skeleton className="h-4 w-28" />
+      <Skeleton className="h-10 w-full" />
+    </div>
     <div className="space-y-2">
       <Skeleton className="h-4 w-24" />
       <Skeleton className="h-10 w-full" />
@@ -35,7 +39,7 @@ const ClerkWrapper = () => {
 
   return isLoaded ? (
     <div className="w-full flex justify-center">
-      <SignIn
+      <SignUp
         appearance={{
           elements: {
             formButtonPrimary: "bg-blue-600 hover:bg-blue-700",
@@ -44,8 +48,8 @@ const ClerkWrapper = () => {
             headerSubtitle: "hidden",
           },
         }}
-        redirectUrl="/dashboard"
-        signUpUrl="/sign-up"
+        redirectUrl="/dashboard?signup=success"
+        signInUrl="/sign-in"
       />
     </div>
   ) : (
@@ -53,36 +57,10 @@ const ClerkWrapper = () => {
   );
 };
 
-export default function SignInPage() {
+export default function SignUpPage() {
   return (
     <div className="min-h-screen flex">
-      {/* Left side - Full Image with Overlay */}
-      <div className="hidden lg:flex lg:w-1/2 relative">
-        {/* Background Image */}
-        <Image
-          src="/login.jpg"
-          alt="Login illustration"
-          fill
-          className="object-cover"
-          priority
-        />
-
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/40" />
-
-        {/* Text Content Overlay */}
-        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12 w-full">
-          <div className="text-center space-y-6">
-            <h1 className="text-5xl font-bold mb-4">Welcome Back!</h1>
-            <p className="text-xl max-w-md leading-relaxed">
-              Sign in to continue your conversations and stay connected with
-              your friends.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Right side - Sign In Form */}
+      {/* Left side - Sign Up Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
@@ -96,14 +74,31 @@ export default function SignInPage() {
                 className="mx-auto"
               />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Get Started
+            </h2>
             <p className="text-gray-600">
-              Welcome back! Please sign in to your account.
+              Create your account and start connecting with friends.
             </p>
           </div>
 
           <ClerkWrapper />
         </div>
+      </div>
+
+      {/* Right side - Full Image with Overlay */}
+      <div className="hidden lg:flex lg:w-1/2 relative">
+        {/* Background Image */}
+        <Image
+          src="/signup.png"
+          alt="Signup illustration"
+          fill
+          className="object-cover"
+          priority
+        />
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/30" />
       </div>
     </div>
   );
