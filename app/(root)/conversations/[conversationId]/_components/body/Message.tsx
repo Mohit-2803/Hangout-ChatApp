@@ -79,9 +79,11 @@ const Message = ({
             {fromCurrentUser && (
               <span className="ml-1">
                 {readStatus === "sent" && <Check className="h-3 w-3" />}
-                {readStatus === "delivered" && <Check className="h-3 w-3" />}
+                {readStatus === "delivered" && (
+                  <CheckCheck className="h-3 w-3" />
+                )}
                 {readStatus === "read" && (
-                  <CheckCheck className="h-3 w-3 text-blue-500" />
+                  <CheckCheck className="h-3 w-3 text-pink-600" />
                 )}
               </span>
             )}

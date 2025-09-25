@@ -471,16 +471,16 @@ export const getGroupMembers = query({
       throw new ConvexError("You are not a member of this group");
     }
 
-    // Get all active members of the group
+    // Get all active members of the group (exclude those who left or were removed)
     const memberships = await ctx.db
       .query("conversationMembers")
       .withIndex("by_conversationId", (q) =>
         q.eq("conversationId", args.conversationId)
       )
       .filter((q) =>
-        q.or(
-          q.eq(q.field("status"), "active"),
-          q.eq(q.field("status"), undefined)
+        q.and(
+          q.neq(q.field("status"), "left"),
+          q.neq(q.field("status"), "removed")
         )
       )
       .collect();

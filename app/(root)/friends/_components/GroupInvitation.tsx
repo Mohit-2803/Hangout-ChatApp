@@ -54,8 +54,8 @@ const GroupInvitation = ({ id, group, sender }: Props) => {
   };
 
   return (
-    <Card className="w-full">
-      <CardContent className="flex items-center justify-between p-4">
+    <Card className="w-full py-1">
+      <CardContent className="flex items-center justify-between p-2">
         {/* Left Side: Group Info with Avatar */}
         <div className="flex items-center gap-3">
           <div className="relative">

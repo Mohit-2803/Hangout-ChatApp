@@ -48,7 +48,7 @@ const ClerkWrapper = () => {
             headerSubtitle: "hidden",
           },
         }}
-        redirectUrl="/dashboard?signup=success"
+        redirectUrl="/conversations?signup=success"
         signInUrl="/sign-in"
       />
     </div>
@@ -90,15 +90,12 @@ export default function SignUpPage() {
       <div className="hidden lg:flex lg:w-1/2 relative">
         {/* Background Image */}
         <Image
-          src="/signup.png"
+          src="/chat-2.jpg"
           alt="Signup illustration"
           fill
           className="object-cover"
           priority
         />
-
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/30" />
       </div>
     </div>
   );

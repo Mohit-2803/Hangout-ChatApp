@@ -12,9 +12,10 @@ import {
   Bell,
   Ban,
   PlusCircle,
+  Delete,
 } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -62,6 +63,24 @@ const Header = ({
     otherUserId ? { userId: otherUserId } : "skip"
   );
   const [isGroupInfoOpen, setIsGroupInfoOpen] = useState(false);
+
+  // Prevent modal from closing unexpectedly
+  useEffect(() => {
+    if (isGroupInfoOpen) {
+      // Store the state in sessionStorage to persist across re-renders
+      sessionStorage.setItem("groupInfoOpen", "true");
+    } else {
+      sessionStorage.removeItem("groupInfoOpen");
+    }
+  }, [isGroupInfoOpen]);
+
+  // Check sessionStorage on mount to restore state
+  useEffect(() => {
+    const storedState = sessionStorage.getItem("groupInfoOpen");
+    if (storedState === "true") {
+      setIsGroupInfoOpen(true);
+    }
+  }, []);
 
   // Check if current user is admin of the group
   const isGroupAdmin = useQuery(
@@ -180,7 +199,7 @@ const Header = ({
                     className="cursor-pointer"
                     onClick={() => setIsGroupInfoOpen(true)}
                   >
-                    <Info className="h-4 w-4 mr-2" />
+                    <Info className="h-4 w-4 " />
                     Group info
                   </DropdownMenuItem>
                 )}
@@ -189,7 +208,7 @@ const Header = ({
                     className="cursor-pointer text-red-500"
                     onClick={handleLeaveGroup}
                   >
-                    <LogOut className="h-4 w-4 mr-2" color="red" />
+                    <LogOut className="h-4 w-4 " color="red" />
                     Leave group
                   </DropdownMenuItem>
                 )}
@@ -197,7 +216,7 @@ const Header = ({
             ) : (
               <>
                 <DropdownMenuItem className="cursor-pointer">
-                  <User className="h-4 w-4 mr-2" />
+                  <User className="h-4 w-4 " />
                   View profile
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -208,9 +227,9 @@ const Header = ({
                   })}
                 >
                   {isUserBlocked ? (
-                    <PlusCircle className="h-4 w-4 mr-2" />
+                    <PlusCircle className="h-4 w-4 " />
                   ) : (
-                    <Ban className="h-4 w-4 mr-2" />
+                    <Ban className="h-4 w-4 " />
                   )}
                   {isUserBlocked ? "Unblock user" : "Block user"}
                 </DropdownMenuItem>
@@ -218,18 +237,19 @@ const Header = ({
             )}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">
-              <Search className="h-4 w-4 mr-2" />
+              <Search className="h-4 w-4 " />
               Search messages
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">
-              <Bell className="h-4 w-4 mr-2" />
+              <Bell className="h-4 w-4 " />
               Mute notifications
             </DropdownMenuItem>
             {isGroup && isGroupAdmin && (
               <DropdownMenuItem
-                className="text-destructive cursor-pointer"
+                className="text-red-500 cursor-pointer"
                 onClick={handleDeleteGroup}
               >
+                <Delete className="h-4 w-4 " color="red" />
                 Delete group
               </DropdownMenuItem>
             )}

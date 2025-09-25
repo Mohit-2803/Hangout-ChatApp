@@ -38,12 +38,19 @@ export const create = mutation({
 
     // Check if user is an active member (for groups)
     const conversation = await ctx.db.get(args.conversationId);
-    if (
-      conversation &&
-      conversation.isGroup &&
-      membership.status !== "active"
-    ) {
-      throw new ConvexError("You are no longer an active member of this group");
+    if (conversation && conversation.isGroup) {
+      // If status is undefined, treat as active (for backwards compatibility)
+      // Only block if explicitly set to "left" or "removed"
+      if (membership.status === "left") {
+        throw new ConvexError(
+          "You have left this group and cannot send messages"
+        );
+      } else if (membership.status === "removed") {
+        throw new ConvexError(
+          "You have been removed from this group and cannot send messages"
+        );
+      }
+      // Allow if status is "active" or undefined (default active state)
     }
 
     const message = await ctx.db.insert("messages", {

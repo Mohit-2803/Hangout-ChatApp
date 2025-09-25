@@ -1,12 +1,17 @@
 {
-  "name": "connect",
+  "name": "hangout",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "type-check": "tsc --noEmit",
+    "convex:dev": "convex dev",
+    "convex:deploy": "convex deploy --prod",
+    "deploy": "npm run convex:deploy && npm run build"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.32.2",

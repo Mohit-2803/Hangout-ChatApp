@@ -4,6 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useConversation } from "@/hooks/useConversation";
 import { useMessageReadReceipts } from "@/hooks/usePresence";
+import { useMessageScroll } from "@/hooks/useMessageScroll";
 import { useQuery } from "convex/react";
 import React from "react";
 import Message from "./Message";
@@ -49,6 +50,7 @@ const MessageSkeleton = ({ fromRight }: { fromRight: boolean }) => {
 const Body = () => {
   const { conversationId } = useConversation();
   const { markAllMessagesAsRead } = useMessageReadReceipts();
+  const { scrollAreaRef, scrollToBottom } = useMessageScroll();
 
   const messages = useQuery(api.messages.get, {
     id: conversationId as Id<"conversations">,
@@ -78,10 +80,23 @@ const Body = () => {
     }
   }, [messages, conversation, markAllMessagesAsRead, conversationId]);
 
+  // Auto-scroll to bottom when new messages arrive or on initial load
+  React.useEffect(() => {
+    if (messages && messages.length > 0) {
+      // Use requestAnimationFrame to ensure DOM has updated
+      requestAnimationFrame(() => {
+        scrollToBottom();
+      });
+    }
+  }, [messages, scrollToBottom]);
+
   const isLoading = messages === undefined;
 
   return (
-    <div className="flex-1 w-full flex overflow-y-scroll flex-col-reverse gap-2 p-3 no-scrollbar">
+    <div
+      ref={scrollAreaRef}
+      className="flex-1 w-full flex overflow-y-scroll flex-col-reverse gap-2 p-3 no-scrollbar"
+    >
       {isLoading ? (
         <>
           <MessageSkeleton fromRight={true} />

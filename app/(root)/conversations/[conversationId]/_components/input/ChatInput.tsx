@@ -74,6 +74,7 @@ const ChatInput = () => {
     })
       .then(() => {
         form.reset();
+        // Auto-scroll will be handled by the Body component when the new message is added
       })
       .catch((err) => {
         toast.error(

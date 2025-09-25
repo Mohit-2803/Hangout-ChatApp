@@ -193,7 +193,7 @@ const GroupInfo = ({ conversationId, isOpen, onClose }: Props) => {
                     <DialogTrigger asChild>
                       <Button
                         variant="outline"
-                        className="w-full justify-start"
+                        className="w-full justify-start cursor-pointer"
                       >
                         <UserPlus className="h-4 w-4 mr-2" />
                         Add Member
@@ -226,8 +226,9 @@ const GroupInfo = ({ conversationId, isOpen, onClose }: Props) => {
                           type="button"
                           onClick={handleAddMember}
                           disabled={!newMemberEmail.trim()}
+                          className="cursor-pointer"
                         >
-                          <Mail className="h-4 w-4 mr-2" />
+                          <Mail className="h-4 w-4" />
                           Send Invitation
                         </Button>
                       </DialogFooter>

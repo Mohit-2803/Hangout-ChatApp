@@ -103,7 +103,8 @@ export const get = query({
 
       // Check if the user is still an active member or has left/been removed
       const isMemberActive =
-        !currentMembership?.status || currentMembership.status === "active";
+        currentMembership?.status !== "left" &&
+        currentMembership?.status !== "removed";
 
       return {
         ...conversation,
