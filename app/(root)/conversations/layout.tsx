@@ -7,6 +7,10 @@ import { api } from "@/convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import DMConversationItem from "./_components/DMConversationItem";
+import GroupConversationItem from "./_components/GroupConversationItem";
+import CreateGroupDialog from "./_components/CreateGroupDialog";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 type Props = {
   children: React.ReactNode;
@@ -17,22 +21,52 @@ const ConversationsLayout = ({ children }: Props) => {
 
   return (
     <div className="flex gap-4 h-full w-full">
-      <ItemList title="Conversations">
+      <ItemList
+        title="Conversations"
+        action={
+          <CreateGroupDialog>
+            <Button size="sm" variant={"default"} className="cursor-pointer">
+              <Plus className="h-4 w-4" />
+              Group
+            </Button>
+          </CreateGroupDialog>
+        }
+      >
         {conversations ? (
           conversations.length === 0 ? (
             <p className="text-sm text-gray-500">No conversations</p>
           ) : (
-            conversations.map((item) => (
-              <DMConversationItem
-                key={item.conversation._id}
-                id={item.conversation._id}
-                imageUrl={item.otherMember?.imageUrl || ""}
-                username={item.otherMember?.username || "Unknown"}
-              />
-            ))
+            conversations.map((item) => {
+              if (item.conversation.isGroup) {
+                return (
+                  <GroupConversationItem
+                    key={item.conversation._id}
+                    id={item.conversation._id}
+                    imageUrl={item.conversation.imageUrl}
+                    name={item.conversation.name || "Group"}
+                    memberCount={item?.otherMembers?.length || 0}
+                    lastMessageSender={item.lastMessage?.sender}
+                    lastMessageContent={item.lastMessage?.content}
+                    lastMessageTimestamp={item.conversation._creationTime}
+                  />
+                );
+              } else {
+                return (
+                  <DMConversationItem
+                    key={item.conversation._id}
+                    id={item.conversation._id}
+                    imageUrl={item.otherMember?.imageUrl || ""}
+                    username={item.otherMember?.username || "Unknown"}
+                    lastMessageSender={item.lastMessage?.sender}
+                    lastMessageContent={item.lastMessage?.content}
+                    lastMessageTimestamp={item.conversation._creationTime}
+                  />
+                );
+              }
+            })
           )
         ) : (
-          Array.from({ length: 3 }).map((_, index) => (
+          Array.from({ length: 8 }).map((_, index) => (
             <Card
               key={index}
               className="w-full p-2 flex flex-row items-center justify-between gap-2"

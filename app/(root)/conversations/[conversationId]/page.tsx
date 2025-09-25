@@ -4,11 +4,15 @@ import ConversationContainer from "@/components/shared/conversation/Conversation
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Header from "./_components/Header";
+import Body from "./_components/body/Body";
+import ChatInput from "./_components/input/ChatInput";
+import { useMessageReadReceipts } from "@/hooks/usePresence";
+import { useAuth } from "@clerk/nextjs";
 
 type Props = {
   params: { conversationId: Id<"conversations"> };
@@ -16,6 +20,21 @@ type Props = {
 
 const ConversationPage = ({ params: { conversationId } }: Props) => {
   const conversation = useQuery(api.conversation.get, { id: conversationId });
+  const { userId } = useAuth();
+  const { markAllMessagesAsRead } = useMessageReadReceipts();
+
+  // Mark all messages as read when the user opens the conversation
+  useEffect(() => {
+    if (conversation && userId) {
+      // For group chats and individual conversations
+      if (conversation && conversation.currentMember) {
+        markAllMessagesAsRead(
+          conversationId,
+          conversation.currentMember._id as Id<"users">
+        );
+      }
+    }
+  }, [conversation, userId, conversationId, markAllMessagesAsRead]);
 
   // Skeleton loader for the conversation header
   const ConversationHeaderSkeleton = () => (
@@ -54,10 +73,35 @@ const ConversationPage = ({ params: { conversationId } }: Props) => {
   const ConversationHeader = () => {
     if (!conversation) return null;
 
+    // Check if it's a group conversation
+    const isGroup = conversation.isGroup;
+
+    // For group conversations
+    if (isGroup) {
+      // Check if user is an active member (not removed or left)
+      const isMemberActive = conversation.currentMember?.isMemberActive;
+
+      return (
+        <Header
+          imageUrl={conversation.imageUrl || "/group-avatar.png"}
+          name={conversation.name || "Group Chat"}
+          isGroup={conversation.isGroup}
+          memberCount={conversation.otherMembers?.length || 0}
+          conversationId={conversationId}
+          isMember={isMemberActive}
+        />
+      );
+    }
+
+    // For individual conversations
     return (
       <Header
         imageUrl={conversation.otherMember?.imageUrl}
         name={conversation.otherMember?.username || "Unknown"}
+        isGroup={false}
+        otherUserId={conversation.otherMember?._id}
+        onlineStatus={conversation.otherMember?.onlineStatus || "offline"}
+        lastSeen={conversation.otherMember?.lastSeen}
       />
     );
   };
@@ -73,12 +117,8 @@ const ConversationPage = ({ params: { conversationId } }: Props) => {
         // Conversation found
         <>
           <ConversationHeader />
-          {/* Message content will be implemented later */}
-          <div className="flex-1 p-4">
-            <p className="text-center text-muted-foreground">
-              Message content will be implemented here
-            </p>
-          </div>
+          <Body />
+          <ChatInput />
         </>
       )}
     </ConversationContainer>

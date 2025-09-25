@@ -3,37 +3,39 @@
 import React from "react";
 import ConversationFallback from "@/components/shared/conversation/ConversationFallback";
 import ItemList from "@/components/shared/item-list/itemList";
-import AddFriendDialog from "./_components/AddFriendDialog";
-import Request from "./_components/Request";
+import GroupInvitation from "../friends/_components/GroupInvitation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 
-const FriendsPage = () => {
-  const requests = useQuery(api.requests.get);
+const NotificationsPage = () => {
+  const groupInvitations = useQuery(api.group.getGroupInvitations);
 
   return (
     <div className="flex gap-4 h-full w-full">
-      <ItemList title="Friends" action={<AddFriendDialog />}>
-        {/* Friend Requests Section */}
+      <ItemList title="Notifications">
+        {/* Group Invitations Section */}
         <div>
           <h3 className="text-sm font-medium text-muted-foreground mb-2">
-            Friend Requests
+            Group Invitations
           </h3>
-          {requests ? (
-            requests.length === 0 ? (
-              <p className="text-sm text-gray-500">No friend requests</p>
+          {groupInvitations ? (
+            groupInvitations.length === 0 ? (
+              <p className="text-sm text-gray-500">No group invitations</p>
             ) : (
-              requests.map((request) => (
-                <Request
-                  key={request.request._id}
-                  id={request.request._id}
-                  imgUrl={request.sender.imageUrl}
-                  username={request.sender.username}
-                  email={request.sender.email}
-                />
-              ))
+              groupInvitations.map(
+                (invitation) =>
+                  invitation.group &&
+                  invitation.sender && (
+                    <GroupInvitation
+                      key={invitation._id}
+                      id={invitation._id}
+                      group={invitation.group}
+                      sender={invitation.sender}
+                    />
+                  )
+              )
             )
           ) : (
             Array.from({ length: 3 }).map((_, index) => (
@@ -62,4 +64,4 @@ const FriendsPage = () => {
   );
 };
 
-export default FriendsPage;
+export default NotificationsPage;

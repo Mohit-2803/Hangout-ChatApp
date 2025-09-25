@@ -26,7 +26,7 @@ export default async function HomePage() {
             </p>
             <div className="mt-8 flex items-center justify-center gap-3">
               <Button asChild>
-                <Link href={isSignedIn ? "/dashboard" : "/sign-in"}>
+                <Link href={isSignedIn ? "/conversations" : "/sign-in"}>
                   {isSignedIn ? "Open app" : "Get started"}
                 </Link>
               </Button>

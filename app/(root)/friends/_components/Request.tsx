@@ -25,59 +25,66 @@ const Request = ({ id, imgUrl, username, email }: Props) => {
   );
 
   return (
-    <Card className="w-full p-2 flex flex-row items-center justify-between gap-2">
-      <div className="flex items-center gap-4 truncate">
-        <Avatar>
-          <AvatarImage src={imgUrl} />
-          <AvatarFallback>{username.charAt(0).toUpperCase()}</AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col truncate">
-          <h4 className="truncate">{username}</h4>
-          <span className="text-sm text-gray-500 truncate">{email}</span>
+    <Card className="w-full">
+      <div className="p-4 flex items-center justify-between">
+        {/* Left Side: User Info with Avatar */}
+        <div className="flex items-center gap-4 truncate">
+          <Avatar className="h-12 w-12">
+            <AvatarImage src={imgUrl} />
+            <AvatarFallback>{username.charAt(0).toUpperCase()}</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <p className="font-medium">{username}</p>
+            <p className="text-sm text-muted-foreground truncate">{email}</p>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button
-          size="icon"
-          className="cursor-pointer"
-          onClick={() => {
-            acceptRequest({ id })
-              .then(() => {
-                toast.success("Friend request accepted");
-              })
-              .catch((err) => {
-                toast.error(
-                  err instanceof ConvexError
-                    ? err.data
-                    : "Failed to accept friend request"
-                );
-              });
-          }}
-          disabled={acceptPending || denyPending}
-        >
-          <CheckIcon />
-        </Button>
-        <Button
-          size="icon"
-          className="cursor-pointer"
-          onClick={() => {
-            denyRequest({ id })
-              .then(() => {
-                toast.success("Friend request denied");
-              })
-              .catch((err) => {
-                toast.error(
-                  err instanceof ConvexError
-                    ? err.data
-                    : "Failed to deny friend request"
-                );
-              });
-          }}
-          variant={"destructive"}
-          disabled={acceptPending || denyPending}
-        >
-          <XIcon />
-        </Button>
+
+        {/* Right Side: Action Buttons */}
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            className="cursor-pointer"
+            onClick={() => {
+              acceptRequest({ id })
+                .then(() => {
+                  toast.success("Friend request accepted");
+                })
+                .catch((err) => {
+                  toast.error(
+                    err instanceof ConvexError
+                      ? err.data
+                      : "Failed to accept friend request"
+                  );
+                });
+            }}
+            disabled={acceptPending || denyPending}
+          >
+            <CheckIcon className="h-4 w-4 mr-1" />
+            Accept
+          </Button>
+          <Button
+            size="sm"
+            className="cursor-pointer"
+            onClick={() => {
+              denyRequest({ id })
+                .then(() => {
+                  toast.success("Friend request denied");
+                })
+                .catch((err) => {
+                  toast.error(
+                    err instanceof ConvexError
+                      ? err.data
+                      : "Failed to deny friend request"
+                  );
+                });
+            }}
+            variant="outline"
+            disabled={acceptPending || denyPending}
+          >
+            <XIcon className="h-4 w-4 mr-1" />
+            Reject
+          </Button>
+        </div>
       </div>
     </Card>
   );

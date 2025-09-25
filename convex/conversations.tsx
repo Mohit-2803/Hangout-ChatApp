@@ -1,6 +1,7 @@
 import { ConvexError } from "convex/values";
-import { query } from "./_generated/server";
+import { MutationCtx, query, QueryCtx } from "./_generated/server";
 import { getUserByClerkId } from "./_utils";
+import { Id } from "./_generated/dataModel";
 
 export const get = query({
   args: {},
@@ -43,8 +44,20 @@ export const get = query({
           )
           .collect();
 
+        const lastMessage = await getLastMessageDetails({
+          ctx,
+          id: conversation?.lastMessageId,
+        });
+
         if (conversation.isGroup) {
-          return { conversation };
+          // For group conversations, include all members except the current user
+          const otherMembers = await Promise.all(
+            allConversationMemberships
+              .filter((membership) => membership.memberId !== currentUser._id)
+              .map(async (membership) => await ctx.db.get(membership.memberId))
+          );
+
+          return { conversation, otherMembers, lastMessage };
         } else {
           const otherMembership = allConversationMemberships.filter(
             (membership) => membership.memberId !== currentUser._id
@@ -52,7 +65,7 @@ export const get = query({
 
           const otherMember = await ctx.db.get(otherMembership[0].memberId);
 
-          return { conversation, otherMember };
+          return { conversation, otherMember, lastMessage };
         }
       })
     );
@@ -60,3 +73,34 @@ export const get = query({
     return conversationsWithDetails;
   },
 });
+
+const getLastMessageDetails = async ({
+  ctx,
+  id,
+}: {
+  ctx: QueryCtx | MutationCtx;
+  id: Id<"messages"> | undefined;
+}) => {
+  if (!id) return null;
+  const message = await ctx.db.get(id);
+  if (!message) return null;
+  const sender = await ctx.db.get(message.senderId);
+  if (!sender) return null;
+
+  const content = getMessageContent(message.type, message.content);
+
+  return {
+    content,
+    sender: sender.username,
+  };
+};
+
+const getMessageContent = (type: string, content: string[]) => {
+  switch (type) {
+    case "text":
+      return content.join("");
+
+    default:
+      return "[Non-text]";
+  }
+};

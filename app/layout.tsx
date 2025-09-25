@@ -5,6 +5,7 @@ import ConvexClientProvider from "@/providers/ConvexClientProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ui/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import PresenceProvider from "@/components/providers/PresenceProvider";
 
 const ibmPlexSans = IBM_Plex_Sans({
   variable: "--font-ibm-plex-sans",
@@ -49,13 +50,15 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ConvexClientProvider>
-            <TooltipProvider>{children}</TooltipProvider>
-            <Toaster
-              position="top-right"
-              richColors={true}
-              closeButton={true}
-              duration={4000}
-            />
+            <PresenceProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+              <Toaster
+                position="top-right"
+                richColors={true}
+                closeButton={true}
+                duration={4000}
+              />
+            </PresenceProvider>
           </ConvexClientProvider>
         </ThemeProvider>
       </body>
