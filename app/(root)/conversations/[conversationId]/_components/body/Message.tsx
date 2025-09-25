@@ -13,7 +13,6 @@ type Props = {
   createdAt: number;
   type: string;
   readStatus?: string;
-  readBy?: string[];
 };
 
 const Message = ({
@@ -25,7 +24,6 @@ const Message = ({
   createdAt,
   type,
   readStatus = "sent",
-  readBy = [],
 }: Props) => {
   const formatTime = (timestamp: number) => {
     return format(timestamp, "HH:mm");

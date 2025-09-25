@@ -111,14 +111,7 @@ const Body = () => {
             .filter((msg): msg is NonNullable<typeof msg> => msg !== null)
             .map(
               (
-                {
-                  message,
-                  senderImage,
-                  senderName,
-                  isCurrentUser,
-                  readStatus,
-                  readBy,
-                },
+                { message, senderImage, senderName, isCurrentUser, readStatus },
                 index,
                 filteredMessages
               ) => {
@@ -137,7 +130,6 @@ const Body = () => {
                     createdAt={message._creationTime}
                     type={message.type}
                     readStatus={readStatus}
-                    readBy={readBy}
                   />
                 );
               }
